@@ -20,7 +20,7 @@ import com.stefanini.servico.PessoaServico;
 @Path("pessoas")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class TesteResource {
+public class PessoaResource {
 
 	@Inject
 	private PessoaServico pessoaServico;
@@ -31,7 +31,7 @@ public class TesteResource {
 	}
 
 	@POST
-	public Response obterListaPessoa(@Valid Pessoa pessoa) {
+	public Response salvarPessoa(@Valid Pessoa pessoa) {
 		return Response.ok(pessoaServico.salvar(pessoa)).build();
 	}
 	
@@ -39,8 +39,8 @@ public class TesteResource {
 	@GET
 	@Path("{id}")
 	public Response obterPessoa(@PathParam("id") Long id) {
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity("deu ruim").build();
-//		return Response.ok(pessoaServico.encontrar(id).get()).build();
+//		return Response.status(Status.INTERNAL_SERVER_ERROR).entity("deu ruim").build();
+		return Response.ok(pessoaServico.encontrar(id).get()).build();
 	}
 
 	@PUT
