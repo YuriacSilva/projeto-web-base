@@ -1,10 +1,9 @@
 package com.stefanini.servico;
 
-import com.stefanini.dao.PessoaDao;
-import com.stefanini.dto.PessoaDTO;
-import com.stefanini.model.Pessoa;
-import com.stefanini.parser.PessoaParser;
-import com.stefanini.util.IGenericService;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -15,10 +14,10 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.stefanini.dao.PessoaDAO;
+import com.stefanini.dto.PessoaDTO;
+import com.stefanini.model.Pessoa;
+import com.stefanini.parser.PessoaParser;
 
 /**
  * 
@@ -34,11 +33,12 @@ import java.util.Optional;
 public class PessoaServico implements Serializable {
 
 	/**
-	 * 
+	 * serial da classe
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	@Inject
-	private PessoaDao dao;
+	private PessoaDAO dao;
 	
 	@Inject
 	private PessoaParser pessoaParser;
@@ -48,29 +48,46 @@ public class PessoaServico implements Serializable {
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Pessoa salvar(@Valid Pessoa pessoa) {
-		return dao.salvar(pessoa);
+	  if(dao.encontrarPorEmail(pessoa.getEmail())) {
+      return new Pessoa();
+    }
+    return dao.salvar(pessoa);
 	}
 
 	/**
 	 * Atualizar o dados de uma pessoa
 	 */
-//	@Override
-	public Pessoa atualizar(@Valid Pessoa entity) {
-		return dao.atualizar(entity);
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public Pessoa atualizar(@Valid Pessoa pessoa) {
+	  if(dao.encontrarPorEmail(pessoa.getEmail())) {
+	    return new Pessoa();
+	  }
+		return dao.atualizar(pessoa);
 	}
 
 	/**
 	 * Remover uma pessoa pelo id
 	 */
-//	@Override
-	public void remover(@Valid Long id) {
-		dao.remover(id);
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public Boolean remover(@Valid Long id) {
+	  Optional<Pessoa> pessoa = dao.encontrar(id);
+	  if(pessoa.isPresent()) {
+	    System.out.println("isPresent");
+  	  if(pessoa.get().getEnderecos().isEmpty()) {
+  	    System.out.println("isEmpty");
+  	    dao.remover(id);
+  	    return true;
+  	  }
+  	  System.out.println("not isEmpty");
+  	  return false;
+	  }
+	  System.out.println("not isPresent");
+	  return false;
 	}
 
 	/**
 	 * Buscar uma lista de Pessoa
 	 */
-//	@Override
 	public Optional<List<PessoaDTO>> getList() {
 	  Optional<List<Pessoa>> optList = dao.getList();
 	  if(optList.isPresent()) {
@@ -82,7 +99,6 @@ public class PessoaServico implements Serializable {
 	/**
 	 * Buscar uma Pessoa pelo ID
 	 */
-//	@Override
 	public Optional<PessoaDTO> encontrar(Long id) {
 	  Optional<Pessoa> optPessoa = dao.encontrar(id);
     if(optPessoa.isPresent()) {
@@ -90,5 +106,14 @@ public class PessoaServico implements Serializable {
     }
 		return Optional.of(new PessoaDTO());
 	}
-
+	
+	public Optional<List<PessoaDTO>> encontrarPorFiltro(PessoaDTO pessoaDTO) {
+    Optional<List<Pessoa>> optPessoa = dao.encontrarComFiltro(pessoaDTO);
+    if(optPessoa.isPresent()) {
+      return Optional.of(pessoaParser.toDTOList(optPessoa.get()));
+    }
+    List<PessoaDTO> retorno = new ArrayList<PessoaDTO>();
+    return Optional.of(retorno);
+  }
+	
 }

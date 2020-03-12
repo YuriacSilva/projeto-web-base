@@ -14,6 +14,26 @@ public class EnderecoDTO {
     public EnderecoDTO() {
     }
 
+    public EnderecoDTO(
+        Long id,
+        String cep,
+        String uf,
+        String localidade,
+        String bairro,
+        String complemento,
+        String logradouro,
+        Long idPessoa) {
+      super();
+      this.id = id;
+      this.cep = cep;
+      this.uf = uf;
+      this.localidade = localidade;
+      this.bairro = bairro;
+      this.complemento = complemento;
+      this.logradouro = logradouro;
+      this.idPessoa = idPessoa;
+    }
+
     public Long getId() {
         return id;
     }
