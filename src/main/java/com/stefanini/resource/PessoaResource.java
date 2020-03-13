@@ -1,18 +1,15 @@
 package com.stefanini.resource;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -36,34 +33,18 @@ public class PessoaResource {
 		return Response.ok(pessoaServico.getList().get()).build();
 	}
 
-	@POST
-	public Response salvarPessoa(@Valid Pessoa pessoa) {
-		return (pessoaServico.salvar(pessoa).toString().equals(pessoa.toString()) ? 
-		    Response.ok(pessoaServico.salvar(pessoa)).build() :
-		      Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
-	}
-	
-	@GET
-	@Path("{id}")
-	public Response obterPessoa(@PathParam("id") Long id) {
-		return Response.ok(pessoaServico.encontrar(id).get()).build();
-	}
-
-	@PUT
-  public Response atualizarPessoa(@Valid Pessoa pessoa) {
-	  return (pessoaServico.atualizar(pessoa).toString().equals(pessoa.toString()) ? 
-        Response.ok(pessoaServico.atualizar(pessoa)).build() :
-          Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
+  @GET
+  @Path("/buscarporid")
+  public Response obterPessoaPorId(@QueryParam("id") Long id) {
+    return Response.ok(pessoaServico.encontrar(id).get()).build();
   }
   
-  @DELETE
-  @Path("{id}")
-  public Response removerPessoa(@PathParam("id") Long id) {
-    return (pessoaServico.remover(id) ? 
-        Response.ok().build() : 
-          Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
+  @GET
+  @Path("/buscarpornome")
+  public Response obterPessoaPorNome(@QueryParam("nome") String nome) {
+    return Response.ok(pessoaServico.encontrarPorNome(nome).get()).build();
   }
-	
+  
   @GET
   @Path("/filtrar")
   public Response obterListaPessoaFiltro(
@@ -76,4 +57,26 @@ public class PessoaResource {
     return Response.ok(pessoaServico.encontrarPorFiltro(pessoaDTO)).build();
   }
   
+	@POST
+	public Response salvarPessoa(@Valid Pessoa pessoa) {
+		return (pessoaServico.salvar(pessoa).toString().equals(pessoa.toString()) ? 
+		    Response.ok(pessoaServico.salvar(pessoa)).build() :
+		      Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
+	}
+	
+	@PUT
+  public Response atualizarPessoa(@Valid Pessoa pessoa) {
+	  return (pessoaServico.atualizar(pessoa).toString().equals(pessoa.toString()) ? 
+        Response.ok(pessoaServico.atualizar(pessoa)).build() :
+          Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
+  }
+  
+  @DELETE
+  @Path("/deletar")
+  public Response removerPessoa(@QueryParam("id") Long id) {
+    return (pessoaServico.remover(id) ? 
+        Response.ok().build() : 
+          Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
+  }
+	
 }

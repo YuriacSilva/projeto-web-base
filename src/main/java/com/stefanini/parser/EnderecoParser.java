@@ -6,29 +6,29 @@ import com.stefanini.model.Endereco;
 public class EnderecoParser {
 
   public Endereco toEntity(EnderecoDTO dto) {
-    Endereco endereco = new Endereco();
-    endereco.setBairro(dto.getBairro());
-    endereco.setLocalidade(dto.getLocalidade());
-    endereco.setCep(dto.getCep());
-    endereco.setComplemento(dto.getComplemento());
-    endereco.setId(dto.getId());
-    endereco.setIdPessoa(dto.getIdPessoa());
-    endereco.setLogradouro(dto.getLogradouro());
-    endereco.setLocalidade(dto.getLocalidade());
-    return endereco;
+    Endereco entidade = new Endereco();
+    entidade.setBairro(dto.getBairro());
+    entidade.setLocalidade(dto.getLocalidade());
+    entidade.setCep(dto.getCep());
+    entidade.setComplemento(dto.getComplemento());
+    entidade.setId(dto.getId());
+    entidade.setIdPessoa(dto.getIdPessoa());
+    entidade.setLogradouro(dto.getLogradouro());
+    entidade.setLocalidade(dto.getLocalidade());
+    return entidade;
   }
 
-  public EnderecoDTO toDTO(Endereco entity) {
-    EnderecoDTO enderecoDTO = new EnderecoDTO();
-    enderecoDTO.setBairro(entity.getBairro());
-    enderecoDTO.setLocalidade(entity.getLocalidade());
-    enderecoDTO.setCep(entity.getCep());
-    enderecoDTO.setComplemento(entity.getComplemento());
-    enderecoDTO.setId(entity.getId());
-    enderecoDTO.setIdPessoa(entity.getIdPessoa());
-    enderecoDTO.setLogradouro(entity.getLogradouro());
-    enderecoDTO.setLocalidade(entity.getLocalidade());
-    return enderecoDTO;
+  public EnderecoDTO toDTO(Endereco entidade) {
+    EnderecoDTO dto = new EnderecoDTO();
+    dto.setBairro(entidade.getBairro());
+    dto.setLocalidade(entidade.getLocalidade());
+    dto.setCep(entidade.getCep());
+    dto.setComplemento(entidade.getComplemento());
+    dto.setId(entidade.getId());
+    dto.setIdPessoa(entidade.getIdPessoa());
+    dto.setLogradouro(entidade.getLogradouro());
+    dto.setLocalidade(entidade.getLocalidade());
+    return dto;
   }
   
 }

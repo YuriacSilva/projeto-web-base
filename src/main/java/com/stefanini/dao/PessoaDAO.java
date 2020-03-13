@@ -6,6 +6,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import com.stefanini.dao.abstracao.GenericDao;
 import com.stefanini.dto.PessoaDTO;
@@ -26,17 +30,40 @@ public class PessoaDAO extends GenericDao<Pessoa, Long> {
   /**
    * Metodo retorna true se e-mail ja existir na base de dados
    */
-  public Boolean encontrarPorEmail(String email) {
-    StringBuilder sql = new StringBuilder();
-    sql.append("SELECT p FROM Pessoa p WHERE p.email LIKE :email");
-
-    TypedQuery<Pessoa> query = getEntityManager().createQuery(sql.toString(), Pessoa.class);
-
-    query.setParameter("email", email);
-
+  public Boolean isEmailRepeated(String email) {
+    CriteriaBuilder cb = this.getEntityManager().getCriteriaBuilder();
+    CriteriaQuery<Pessoa> cq = cb.createQuery(Pessoa.class);
+    Root<Pessoa> root = cq.from(Pessoa.class);
+    cq.select(root);
+    ParameterExpression<String> pe = cb.parameter(String.class);
+    cq.where(cb.equal(root.get("email"), email));
+    TypedQuery<Pessoa> query = this.getEntityManager().createQuery(cq);
+    
     return !query.getResultList().isEmpty();
   }
+//  public Boolean encontrarPorEmail(String email) {
+//    StringBuilder sql = new StringBuilder();
+//    sql.append("SELECT p FROM Pessoa p WHERE p.email LIKE :email");
+//
+//    TypedQuery<Pessoa> query = getEntityManager().createQuery(sql.toString(), Pessoa.class);
+//
+//    query.setParameter("email", email);
+//
+//    return !query.getResultList().isEmpty();
+//  }
 
+  public Optional<List<Pessoa>> encontrarPorNome(String nome) {
+    CriteriaBuilder cb = this.getEntityManager().getCriteriaBuilder();
+    CriteriaQuery<Pessoa> cq = cb.createQuery(Pessoa.class);
+    Root<Pessoa> root = cq.from(Pessoa.class);
+    cq.select(root);
+    ParameterExpression<String> pe = cb.parameter(String.class);
+    cq.where(cb.equal(root.get("nome"), nome.toUpperCase()));
+    TypedQuery<Pessoa> query = this.getEntityManager().createQuery(cq);
+    
+    return Optional.of(query.getResultList());
+  }
+  
   public Optional<List<Pessoa>> encontrarComFiltro(PessoaDTO filtro) {
     String nome = filtro.getNome();
     String email = filtro.getEmail();
@@ -90,4 +117,6 @@ public class PessoaDAO extends GenericDao<Pessoa, Long> {
     return Optional.of(query.getResultList());
   }
 
+  
+  
 }

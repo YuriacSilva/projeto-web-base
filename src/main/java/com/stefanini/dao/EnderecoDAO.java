@@ -1,16 +1,18 @@
 package com.stefanini.dao;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import com.stefanini.dao.abstracao.GenericDao;
 import com.stefanini.dto.EnderecoDTO;
 import com.stefanini.model.Endereco;
-import com.stefanini.model.Pessoa;
 
 /**
  * O Unico objetivo da Dao 
@@ -23,6 +25,32 @@ public class EnderecoDAO extends GenericDao<Endereco, Long> {
 		super(Endereco.class);
 	}
 
+	/**
+   * Metodo retorna lista de enderecos por ID de Pessoa
+   */
+  public Optional<List<Endereco>> encontrarPorPessoa(Long idPessoa) {
+    CriteriaBuilder cb = this.getEntityManager().getCriteriaBuilder();
+    CriteriaQuery<Endereco> cq = cb.createQuery(Endereco.class);
+    Root<Endereco> root = cq.from(Endereco.class);
+    cq.select(root);
+    ParameterExpression<String> pe = cb.parameter(String.class);
+    cq.where(cb.equal(root.get("idPessoa"), idPessoa));
+    TypedQuery<Endereco> query = this.getEntityManager().createQuery(cq);
+    
+    return Optional.of(query.getResultList());
+  }
+//  
+//  public Optional<List<Endereco>> encontrarPorPessoa(Long idPessoa){
+//    StringBuilder sql = new StringBuilder();
+//    sql.append("SELECT e FROM Endereco e WHERE e.idPessoa = :idPessoa");
+//    
+//    TypedQuery<Endereco> query = getEntityManager().createQuery(sql.toString(), Endereco.class);
+//    
+//    query.setParameter("idPessoa", idPessoa);
+//    
+//    return Optional.of(query.getResultList());
+//  }
+	
 	public Optional<List<Endereco>> encontrarPorFiltro(EnderecoDTO filtro) {
     
 	  Long id = filtro.getId();
@@ -121,16 +149,5 @@ public class EnderecoDAO extends GenericDao<Endereco, Long> {
 
     return Optional.of(query.getResultList());
   }
-	
-	public Optional<List<Endereco>> encontrarPorPessoa(Long idPessoa){
-	  StringBuilder sql = new StringBuilder();
-    sql.append("SELECT e FROM Endereco e WHERE e.idPessoa = :idPessoa");
-    
-    TypedQuery<Endereco> query = getEntityManager().createQuery(sql.toString(), Endereco.class);
-    
-    query.setParameter("idPessoa", idPessoa);
-    
-    return Optional.of(query.getResultList());
-	}
 	
 }

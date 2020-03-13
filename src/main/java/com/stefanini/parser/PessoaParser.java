@@ -7,9 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import com.stefanini.dto.EnderecoDTO;
 import com.stefanini.dto.PessoaDTO;
-import com.stefanini.model.Endereco;
 import com.stefanini.model.Pessoa;
 
 public class PessoaParser {
@@ -29,16 +27,16 @@ public class PessoaParser {
     return entidade;
   }
 
-  public PessoaDTO toDTO(Pessoa entity) {
-    PessoaDTO pessoaDto = new PessoaDTO();
-    pessoaDto.setEnderecos(new HashSet<>());
-    pessoaDto.setId(entity.getId());
-    pessoaDto.setDataNascimento(entity.getDataNascimento());
-    pessoaDto.setEmail(entity.getEmail());
-    pessoaDto.setEnderecos(entity.getEnderecos().stream().map(enderecoParser::toDTO).collect(Collectors.toSet()));
-    pessoaDto.setNome(entity.getNome());
-    pessoaDto.setSituacao(entity.getSituacao());
-    return pessoaDto;
+  public PessoaDTO toDTO(Pessoa entidade) {
+    PessoaDTO dto = new PessoaDTO();
+    dto.setEnderecos(new HashSet<>());
+    dto.setId(entidade.getId());
+    dto.setDataNascimento(entidade.getDataNascimento());
+    dto.setEmail(entidade.getEmail());
+    dto.setEnderecos(entidade.getEnderecos().stream().map(enderecoParser::toDTO).collect(Collectors.toSet()));
+    dto.setNome(entidade.getNome());
+    dto.setSituacao(entidade.getSituacao());
+    return dto;
   }
 
   public List<PessoaDTO> toDTOList(List<Pessoa> lista){
@@ -47,8 +45,8 @@ public class PessoaParser {
   
   public List<Pessoa> toEntityList(List<PessoaDTO> lista){
     List<Pessoa> retorno = new ArrayList<>();
-    for (PessoaDTO pessoaDTO : lista) {
-      retorno.add(toEntity(pessoaDTO));
+    for (PessoaDTO dto : lista) {
+      retorno.add(toEntity(dto));
     }
     return retorno;
   }

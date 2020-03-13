@@ -48,7 +48,7 @@ public class PessoaServico implements Serializable {
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Pessoa salvar(@Valid Pessoa pessoa) {
-	  if(dao.encontrarPorEmail(pessoa.getEmail())) {
+	  if(dao.isEmailRepeated(pessoa.getEmail())) {
       return new Pessoa();
     }
     return dao.salvar(pessoa);
@@ -59,7 +59,7 @@ public class PessoaServico implements Serializable {
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Pessoa atualizar(@Valid Pessoa pessoa) {
-	  if(dao.encontrarPorEmail(pessoa.getEmail())) {
+	  if(dao.isEmailRepeated(pessoa.getEmail())) {
 	    return new Pessoa();
 	  }
 		return dao.atualizar(pessoa);
@@ -72,16 +72,11 @@ public class PessoaServico implements Serializable {
 	public Boolean remover(@Valid Long id) {
 	  Optional<Pessoa> pessoa = dao.encontrar(id);
 	  if(pessoa.isPresent()) {
-	    System.out.println("isPresent");
   	  if(pessoa.get().getEnderecos().isEmpty()) {
-  	    System.out.println("isEmpty");
   	    dao.remover(id);
   	    return true;
   	  }
-  	  System.out.println("not isEmpty");
-  	  return false;
 	  }
-	  System.out.println("not isPresent");
 	  return false;
 	}
 
@@ -107,6 +102,21 @@ public class PessoaServico implements Serializable {
 		return Optional.of(new PessoaDTO());
 	}
 	
+	/**
+   * Buscar uma Pessoa pelo nome
+   */
+  public Optional<List<PessoaDTO>> encontrarPorNome(String nome) {
+    Optional<List<Pessoa>> optPessoa = dao.encontrarPorNome(nome);
+    if(optPessoa.isPresent()) {
+      return Optional.of(pessoaParser.toDTOList(optPessoa.get()));
+    }
+    List<PessoaDTO> retorno = new ArrayList<PessoaDTO>();
+    return Optional.of(retorno);
+  }
+	
+  /**
+   * Buscar uma Pessoa por qualquer um de seus atributos
+   */
 	public Optional<List<PessoaDTO>> encontrarPorFiltro(PessoaDTO pessoaDTO) {
     Optional<List<Pessoa>> optPessoa = dao.encontrarComFiltro(pessoaDTO);
     if(optPessoa.isPresent()) {
