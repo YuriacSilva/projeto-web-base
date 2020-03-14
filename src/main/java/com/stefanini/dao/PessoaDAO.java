@@ -1,6 +1,7 @@
 package com.stefanini.dao;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -8,11 +9,15 @@ import java.util.Optional;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import com.stefanini.dao.abstracao.GenericDao;
 import com.stefanini.dto.PessoaDTO;
+import com.stefanini.model.Endereco;
 import com.stefanini.model.Pessoa;
 
 /**
@@ -26,7 +31,28 @@ public class PessoaDAO extends GenericDao<Pessoa, Long> {
   public PessoaDAO() {
     super(Pessoa.class);
   }
-
+  
+  
+  /**
+   * metodo retorna uma Pessoa bucasndo pelo e-mail
+   * @param email
+   * @return Optional<Pessoa>
+   */
+  public Optional<Pessoa> encontrarPorEmail(String email) {
+    CriteriaBuilder cb = this.getEntityManager().getCriteriaBuilder();
+    CriteriaQuery<Pessoa> cq = cb.createQuery(Pessoa.class);
+    Root<Pessoa> root = cq.from(Pessoa.class);
+    cq.select(root);
+    ParameterExpression<String> pe = cb.parameter(String.class);
+    cq.where(cb.equal(root.get("email"), email));
+    TypedQuery<Pessoa> query = this.getEntityManager().createQuery(cq);
+    
+    if(query.getFirstResult()==0) {
+      return Optional.of(new Pessoa());
+    }
+    return Optional.of(query.getSingleResult());
+  }
+  
   /**
    * Metodo retorna true se e-mail ja existir na base de dados
    */
@@ -38,6 +64,7 @@ public class PessoaDAO extends GenericDao<Pessoa, Long> {
     ParameterExpression<String> pe = cb.parameter(String.class);
     cq.where(cb.equal(root.get("email"), email));
     TypedQuery<Pessoa> query = this.getEntityManager().createQuery(cq);
+    List<Pessoa> lista = query.getResultList();
     
     return !query.getResultList().isEmpty();
   }
@@ -59,6 +86,19 @@ public class PessoaDAO extends GenericDao<Pessoa, Long> {
     cq.select(root);
     ParameterExpression<String> pe = cb.parameter(String.class);
     cq.where(cb.equal(root.get("nome"), nome.toUpperCase()));
+    TypedQuery<Pessoa> query = this.getEntityManager().createQuery(cq);
+    
+    return Optional.of(query.getResultList());
+  }
+  
+  public Optional<List<Pessoa>> encontrarPorUf(String uf) {
+    CriteriaBuilder cb = this.getEntityManager().getCriteriaBuilder();
+    CriteriaQuery<Pessoa> cq = cb.createQuery(Pessoa.class);
+    Root<Pessoa> root = cq.from(Pessoa.class);
+    cq.select(root);
+    Join<Pessoa, Endereco> join = root.join("enderecos");
+    cq.where(cb.equal(join.get("uf"), uf));
+    ParameterExpression<String> pe = cb.parameter(String.class);
     TypedQuery<Pessoa> query = this.getEntityManager().createQuery(cq);
     
     return Optional.of(query.getResultList());
@@ -117,6 +157,4 @@ public class PessoaDAO extends GenericDao<Pessoa, Long> {
     return Optional.of(query.getResultList());
   }
 
-  
-  
 }

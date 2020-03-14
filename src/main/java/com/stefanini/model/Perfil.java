@@ -56,7 +56,7 @@ public class Perfil implements Serializable {
   /**
    * Mapeamento de Pessoa
    */
-  @ManyToMany(mappedBy = "perfils")
+  @ManyToMany(mappedBy = "perfis")
   private Set<Pessoa> pessoas;
 
   public Perfil() {

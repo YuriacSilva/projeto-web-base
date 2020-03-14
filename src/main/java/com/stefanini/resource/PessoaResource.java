@@ -10,6 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -17,7 +18,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.stefanini.dto.PessoaDTO;
-import com.stefanini.model.Pessoa;
 import com.stefanini.servico.PessoaServico;
 
 @Path("pessoas")
@@ -34,8 +34,8 @@ public class PessoaResource {
 	}
 
   @GET
-  @Path("/buscarporid")
-  public Response obterPessoaPorId(@QueryParam("id") Long id) {
+  @Path("{id}")
+  public Response obterPessoaPorId(@PathParam("id") Long id) {
     return Response.ok(pessoaServico.encontrar(id).get()).build();
   }
   
@@ -43,6 +43,12 @@ public class PessoaResource {
   @Path("/buscarpornome")
   public Response obterPessoaPorNome(@QueryParam("nome") String nome) {
     return Response.ok(pessoaServico.encontrarPorNome(nome).get()).build();
+  }
+  
+  @GET
+  @Path("/buscarporuf")
+  public Response obterPessoaPorUf(@QueryParam("uf") String uf) {
+    return Response.ok(pessoaServico.encontrarPorUf(uf).get()).build();
   }
   
   @GET
@@ -58,22 +64,26 @@ public class PessoaResource {
   }
   
 	@POST
-	public Response salvarPessoa(@Valid Pessoa pessoa) {
-		return (pessoaServico.salvar(pessoa).toString().equals(pessoa.toString()) ? 
-		    Response.ok(pessoaServico.salvar(pessoa)).build() :
+	public Response salvarPessoa(@Valid PessoaDTO pessoa) {
+	  PessoaDTO salvar = pessoaServico.salvar(pessoa);
+	  boolean equals = Objects.nonNull(salvar.getEmail());
+		return (equals ? 
+		    Response.ok(salvar).build() :
 		      Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
 	}
 	
 	@PUT
-  public Response atualizarPessoa(@Valid Pessoa pessoa) {
-	  return (pessoaServico.atualizar(pessoa).toString().equals(pessoa.toString()) ? 
-        Response.ok(pessoaServico.atualizar(pessoa)).build() :
+  public Response atualizarPessoa(@Valid PessoaDTO pessoa) {
+	  PessoaDTO atualizar = pessoaServico.atualizar(pessoa);
+	  boolean equals = Objects.nonNull(atualizar.getEmail());
+	  return (equals ? 
+        Response.ok(atualizar).build() :
           Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
   }
   
   @DELETE
-  @Path("/deletar")
-  public Response removerPessoa(@QueryParam("id") Long id) {
+  @Path("{id}")
+  public Response removerPessoa(@PathParam("id") Long id) {
     return (pessoaServico.remover(id) ? 
         Response.ok().build() : 
           Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());

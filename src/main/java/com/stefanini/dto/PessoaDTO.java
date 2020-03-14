@@ -11,18 +11,18 @@ public class PessoaDTO {
 	private LocalDate dataNascimento; 
 	private Boolean situacao;
 	private Set<EnderecoDTO> enderecos;
-	//private Set<PerfilDTO> perfils;
+	private Set<PerfilDTO> perfis;
 
 	public PessoaDTO() {
 	}
 
-//	public Set<PerfilDTO> getPerfils() {
-//		return perfils;
-//	}
-//
-//	public void setPerfils(Set<PerfilDTO> perfils) {
-//		this.perfils = perfils;
-//	}
+	public Set<PerfilDTO> getPerfis() {
+		return perfis;
+	}
+
+	public void setPerfis(Set<PerfilDTO> perfis) {
+		this.perfis = perfis;
+	}
 
 	public PessoaDTO(String nome, String email, LocalDate dataNascimento, Boolean situacao) {
 		super();

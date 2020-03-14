@@ -47,22 +47,24 @@ public class PessoaServico implements Serializable {
 	 * Salvar os dados de uma Pessoa
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Pessoa salvar(@Valid Pessoa pessoa) {
+	public PessoaDTO salvar(@Valid PessoaDTO pessoa) {
 	  if(dao.isEmailRepeated(pessoa.getEmail())) {
-      return new Pessoa();
+      return new PessoaDTO();
     }
-    return dao.salvar(pessoa);
+	  PessoaDTO salvar = pessoaParser.toDTO(dao.salvar(pessoaParser.toEntity(pessoa)));
+    return salvar;
 	}
 
 	/**
 	 * Atualizar o dados de uma pessoa
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Pessoa atualizar(@Valid Pessoa pessoa) {
+	public PessoaDTO atualizar(@Valid PessoaDTO pessoa) {
 	  if(dao.isEmailRepeated(pessoa.getEmail())) {
-	    return new Pessoa();
+	    return new PessoaDTO();
 	  }
-		return dao.atualizar(pessoa);
+	  PessoaDTO atualizar = pessoaParser.toDTO(dao.atualizar(pessoaParser.toEntity(pessoa)));
+		return atualizar;
 	}
 
 	/**
@@ -114,6 +116,31 @@ public class PessoaServico implements Serializable {
     return Optional.of(retorno);
   }
 	
+  /**
+   * Buscar uma Pessoa pelo email
+   */
+  public Optional<PessoaDTO> encontrarPorEmail(String email) {
+    Optional<Pessoa> optPessoa = dao.encontrarPorEmail(email);
+    if(optPessoa.isPresent()) {
+      return Optional.of(pessoaParser.toDTO(optPessoa.get()));
+    }
+    PessoaDTO retorno = new PessoaDTO();
+    return Optional.of(retorno);
+  }
+  
+  /**
+   * Buscar uma Pessoa pela UF
+   */
+  public Optional<List<PessoaDTO>> encontrarPorUf(String uf) {
+    Optional<List<Pessoa>> optPessoa = dao.encontrarPorUf(uf);
+    if(optPessoa.isPresent()) {
+      return Optional.of(pessoaParser.toDTOList(optPessoa.get()));
+    }
+    List<PessoaDTO> retorno = new ArrayList<PessoaDTO>();
+    return Optional.of(retorno);
+  }
+  
+  
   /**
    * Buscar uma Pessoa por qualquer um de seus atributos
    */

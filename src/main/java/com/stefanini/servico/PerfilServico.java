@@ -46,22 +46,22 @@ public class PerfilServico implements Serializable {
 	 * Salvar os dados de um Perfil
 	 */
   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Perfil salvar(@Valid Perfil perfil) {
+	public PerfilDTO salvar(@Valid PerfilDTO perfil) {
     if(dao.isNomeRepeated(perfil.getNome())) {
-      return new Perfil();
+      return new PerfilDTO();
     }
-		return dao.salvar(perfil);
+    return perfilParser.toDTO(dao.salvar(perfilParser.toEntity(perfil)));
 	}
 
 	/**
 	 * Atualizar o dados de um Perfil
 	 */
   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Perfil atualizar(@Valid Perfil perfil) {
+	public PerfilDTO atualizar(@Valid PerfilDTO perfil) {
     if(dao.isNomeRepeated(perfil.getNome())) {
-      return new Perfil();
+      return new PerfilDTO();
     }
-		return dao.atualizar(perfil);
+		return perfilParser.toDTO(dao.atualizar(perfilParser.toEntity(perfil)));
 	}
 
 	/**
@@ -82,15 +82,23 @@ public class PerfilServico implements Serializable {
 	/**
 	 * Buscar uma lista de Perfil
 	 */
-	public Optional<List<Perfil>> getList() {
-		return dao.getList();
+	public Optional<List<PerfilDTO>> getList() {
+	  Optional<List<Perfil>> optList = dao.getList();
+    if(optList.isPresent()) {
+      return Optional.of(perfilParser.toDTOList(optList.get()));
+    }
+    return Optional.of(new ArrayList<>());
 	}
 
 	/**
 	 * Buscar um Perfil pelo ID
 	 */
-	public Optional<Perfil> encontrar(Long id) {
-		return dao.encontrar(id);
+	public Optional<PerfilDTO> encontrar(Long id) {
+	  Optional<Perfil> optPerfil = dao.encontrar(id);
+    if(optPerfil.isPresent()) {
+      return Optional.of(perfilParser.toDTO(optPerfil.get()));
+    }
+    return Optional.of(new PerfilDTO());
 	}
 
   public Optional<List<PerfilDTO>> encontrarPorNome(String nome) {

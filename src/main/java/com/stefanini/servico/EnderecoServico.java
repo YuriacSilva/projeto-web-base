@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 import com.stefanini.dao.EnderecoDAO;
 import com.stefanini.dto.EnderecoDTO;
-import com.stefanini.model.Endereco;
+import com.stefanini.parser.EnderecoParser;
 
 /**
  * 
@@ -34,15 +34,18 @@ public class EnderecoServico implements Serializable {
   
   @Inject
 	private EnderecoDAO dao;
+  
+  @Inject
+  private EnderecoParser enderecoParser;
 
   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Endereco salvar(@Valid Endereco entity) {
-		return dao.salvar(entity);
+	public EnderecoDTO salvar(@Valid EnderecoDTO entity) {
+		return enderecoParser.toDTO(dao.salvar(enderecoParser.toEntity(entity)));
 	}
 
   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Endereco atualizar(@Valid Endereco entity) {
-		return dao.atualizar(entity);
+	public EnderecoDTO atualizar(@Valid EnderecoDTO entity) {
+		return enderecoParser.toDTO(dao.atualizar(enderecoParser.toEntity(entity)));
 	}
 
   @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -50,19 +53,19 @@ public class EnderecoServico implements Serializable {
 	  dao.remover(id);
 	}
 
-	public Optional<List<Endereco>> getList() {
-		return Optional.of(dao.getList().get());
+	public Optional<List<EnderecoDTO>> getList() {
+		return Optional.of(enderecoParser.toDTOList(dao.getList().get()));
 	}
 
-	public Optional<Endereco> encontrar(Long id) {
-		return dao.encontrar(id);
+	public Optional<EnderecoDTO> encontrar(Long id) {
+		return Optional.of(enderecoParser.toDTO(dao.encontrar(id).get()));
 	}
 	
-	public Optional<List<Endereco>> encontrarPorPessoa(Long idPessoa) {
-    return dao.encontrarPorPessoa(idPessoa);
+	public Optional<List<EnderecoDTO>> encontrarPorPessoa(Long idPessoa) {
+    return Optional.of(enderecoParser.toDTOList(dao.encontrarPorPessoa(idPessoa).get()));
   }
 	
-	public Optional<List<Endereco>> encontrarPorFiltro(EnderecoDTO enderecoDTO) {
-    return dao.encontrarPorFiltro(enderecoDTO);
+	public Optional<List<EnderecoDTO>> encontrarPorFiltro(EnderecoDTO enderecoDTO) {
+    return Optional.of(enderecoParser.toDTOList(dao.encontrarPorFiltro(enderecoDTO).get()));
   }
 }

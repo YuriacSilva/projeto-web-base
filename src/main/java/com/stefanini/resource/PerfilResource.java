@@ -1,5 +1,7 @@
 package com.stefanini.resource;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -8,13 +10,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.stefanini.model.Perfil;
+import com.stefanini.dto.PerfilDTO;
 import com.stefanini.servico.PerfilServico;
 
 @Path("perfis")
@@ -24,15 +27,15 @@ public class PerfilResource {
 
 	@Inject
 	private PerfilServico perfilServico;
-
+	
 	@GET
 	public Response obterListaPerfil() {
 		return Response.ok(perfilServico.getList().get()).build();
 	}
 
   @GET
-  @Path("/buscarporid")
-  public Response obterPerfilPorId(@QueryParam("id") Long id) {
+  @Path("{id}")
+  public Response obterPerfilPorId(@PathParam("id") Long id) {
     return Response.ok(perfilServico.encontrar(id).get()).build();
   }
   
@@ -56,22 +59,26 @@ public class PerfilResource {
 //  }
   
 	@POST
-	public Response salvarPerfil(@Valid Perfil perfil) {
-		return (perfilServico.salvar(perfil).toString().equals(perfil.toString()) ? 
-		    Response.ok(perfilServico.salvar(perfil)).build() :
-		      Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
+	public Response salvarPerfil(@Valid PerfilDTO perfil) {
+	  PerfilDTO salvar = perfilServico.salvar(perfil);
+    boolean equals = Objects.nonNull(salvar.getNome());
+    return (equals ? 
+        Response.ok(salvar).build() :
+          Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
 	}
 	
 	@PUT
-  public Response atualizarPerfil(@Valid Perfil perfil) {
-	  return (perfilServico.atualizar(perfil).toString().equals(perfil.toString()) ? 
-        Response.ok(perfilServico.atualizar(perfil)).build() :
+  public Response atualizarPerfil(@Valid PerfilDTO perfil) {
+	  PerfilDTO atualizar = perfilServico.atualizar(perfil);
+    boolean equals = Objects.nonNull(atualizar.getNome());
+    return (equals ? 
+        Response.ok(atualizar).build() :
           Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
   }
   
   @DELETE
-  @Path("/deletar")
-  public Response removerPerfil(@QueryParam("id") Long id) {
+  @Path("{id}")
+  public Response removerPerfil(@PathParam("id") Long id) {
     return (perfilServico.remover(id) ? 
         Response.ok().build() : 
           Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());

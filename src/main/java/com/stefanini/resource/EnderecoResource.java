@@ -13,10 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import com.stefanini.dto.EnderecoDTO;
-import com.stefanini.model.Endereco;
 import com.stefanini.servico.EnderecoServico;
 
 @Path("enderecos")
@@ -33,8 +31,8 @@ public class EnderecoResource {
 	}
 
   @GET
-  @Path("/buscarporid")
-  public Response obterEndereco(@QueryParam("id") Long id) {
+  @Path("{id}")
+  public Response obterEndereco(@PathParam("id") Long id) {
     return Response.ok(enderecoServico.encontrar(id).get()).build();
   }
 	
@@ -62,17 +60,13 @@ public class EnderecoResource {
   }
 	
 	@POST
-	public Response salvarEndereco(@Valid Endereco endereco) {
-		return (enderecoServico.salvar(endereco).toString().equals(endereco.toString()) ? 
-		    Response.ok(enderecoServico.salvar(endereco)).build() :
-		      Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
+	public Response salvarEndereco(@Valid EnderecoDTO endereco) {
+		return Response.ok(enderecoServico.salvar(endereco)).build();
 	}
 
 	@PUT
-  public Response atualizarEndereco(@Valid Endereco endereco) {
-	  return (enderecoServico.atualizar(endereco).toString().equals(endereco.toString()) ? 
-        Response.ok(enderecoServico.atualizar(endereco)).build() :
-          Response.status(Status.BAD_REQUEST).entity("erro de regra de negócio").build());
+  public Response atualizarEndereco(@Valid EnderecoDTO endereco) {
+	  return Response.ok(enderecoServico.atualizar(endereco)).build();
   }
   
   @DELETE

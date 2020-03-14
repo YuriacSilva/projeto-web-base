@@ -12,28 +12,31 @@ import com.stefanini.model.Perfil;
 
 public class PerfilParser {
   
-  @Inject
-  private PessoaParser pessoaParser;
+//  private PessoaParser pessoaParser = new PessoaParser();
 
   public Perfil toEntity(PerfilDTO dto) {
     Perfil entidade = new Perfil();
     entidade.setPessoas(new HashSet<>());
+//  entidade.setPessoas(dto.getPessoas().stream().map(pessoaParser::toEntity).collect(Collectors.toSet()));
     entidade.setId(dto.getId());
+    entidade.setNome(dto.getNome());
     entidade.setDescricao(dto.getDescricao());
     entidade.setDataHoraInclusao(dto.getDataHoraInclusao());
     entidade.setDataHoraAlteracao(dto.getDataHoraAlteracao());
-    entidade.setPessoas(dto.getPessoas().stream().map(pessoaParser::toEntity).collect(Collectors.toSet()));
+
     return entidade;
   }
 
   public PerfilDTO toDTO(Perfil entidade) {
     PerfilDTO dto = new PerfilDTO();
-    dto.setPessoas(new HashSet<>());
+//  dto.setPessoas(new HashSet<>());
+//  dto.setPessoas(entidade.getPessoas().stream().map(pessoaParser::toDTO).collect(Collectors.toSet()));
     dto.setId(entidade.getId());
+    dto.setNome(entidade.getNome());
     dto.setDescricao(entidade.getDescricao());
     dto.setDataHoraInclusao(entidade.getDataHoraInclusao());
     dto.setDataHoraAlteracao(entidade.getDataHoraAlteracao());
-    dto.setPessoas(entidade.getPessoas().stream().map(pessoaParser::toDTO).collect(Collectors.toSet()));
+
     return dto;
   }
 

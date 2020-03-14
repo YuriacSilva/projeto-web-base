@@ -12,7 +12,7 @@ public class PerfilDTO {
   private String descricao;
   private LocalDateTime dataHoraInclusao;
   private LocalDateTime dataHoraAlteracao;
-  private Set<PessoaDTO> pessoas;
+//  private Set<PessoaDTO> pessoas;
 
   public PerfilDTO() {
   }
@@ -28,13 +28,13 @@ public class PerfilDTO {
     this.dataHoraAlteracao = dataHoraAlteracao;
   }
 
-  public Set<PessoaDTO> getPessoas() {
-    return pessoas;
-  }
-
-  public void setPessoas(Set<PessoaDTO> pessoas) {
-    this.pessoas = pessoas;
-  }
+//  public Set<PessoaDTO> getPessoas() {
+//    return pessoas;
+//  }
+//
+//  public void setPessoas(Set<PessoaDTO> pessoas) {
+//    this.pessoas = pessoas;
+//  }
 
   public Long getId() {
     return id;
